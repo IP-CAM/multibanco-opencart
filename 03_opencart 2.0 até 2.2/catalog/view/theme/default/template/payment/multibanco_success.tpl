@@ -1,6 +1,6 @@
 <br/><br/>
 <div style="padding: 10px; margin-bottom: 10px;">
-	<table cellpadding="3" width="300px" cellspacing="0" style="border: 1px solid #45829F; background-color: #FFFFFF;" align="center">
+	<table cellpadding="3" cellspacing="0" style="width: 300px !important; border: 1px solid #45829F; background-color: #FFFFFF;" align="center">
 			<tr>
 				<td style="font-size: x-small; border-top: 0px; border-left: 0px; border-right: 0px; border-bottom: 1px solid #45829F; background-color: #45829F; color: White" colspan="3"><div align="center">Pagamento por Multibanco ou Homebanking</div></td>
 			</tr>
@@ -15,7 +15,7 @@
 			</tr>
 			<tr>
 				<td style="font-size: x-small; font-weight:bold; text-align:left">Valor:</td>
-				<td style="font-size: x-small; text-align:left"><?php echo $entry_valor; ?></td>
+				<td style="font-size: x-small; text-align:left"><?php echo number_format((float)$entry_valor, 2, '.', ''); ?> &euro;</td>
 			</tr>
 			<tr>
 				<td style="font-size: xx-small;border-top: 1px solid #45829F; border-left: 0px; border-right: 0px; border-bottom: 0px; background-color: #45829F; color: White" colspan="3">O tal&atilde;o emitido pela caixa autom&aacute;tica faz prova de pagamento. Conserve-o.</td>
