@@ -156,7 +156,11 @@ class ModelPaymentMultibanco extends Model {
 		$data_mb[\'entry_referencia\'] .= $referencia;
 		$data_mb[\'entry_valor\'] .= $multibanco_info[0]["valor"];
 
-		$mb_template = $this->load->view(\'payment/multibanco_success\', $data_mb);
+    if (file_exists(DIR_TEMPLATE . $this->config->get(\'config_template\') . \'/template/payment/multibanco_success.tpl\')) {
+      $mb_template = $this->load->view($this->config->get(\'config_template\') . \'/template/payment/multibanco_success.tpl\', $data_mb);
+    } else {
+      $mb_template = $this->load->view(\'default/template/payment/multibanco_success.tpl\', $data_mb);
+    }
 
 		$data[\'text_message\'] .= $mb_template;
 		}
