@@ -34,7 +34,7 @@ class ControllerExtensionPaymentMultibanco extends Controller {
 
 				$order_info = $this->model_checkout_order->getOrder($order_info_ip["order_id"]);
 
-				$this->model_checkout_order->addOrderHistory($order_info["order_id"], $this->config->get('multibanco_order_status_complete_id'), date("d-m-Y H:m:s"), true);
+				$this->model_checkout_order->addOrderHistory($order_info["order_id"], $this->config->get('payment_multibanco_order_status_complete_id'), date("d-m-Y H:m:s"), true);
 
 				$this->model_extension_payment_multibanco->setIfthenpayDataStatus($order_info_ip["multibanco_id"]);
 			}
