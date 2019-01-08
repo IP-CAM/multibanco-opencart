@@ -27,7 +27,7 @@ class ControllerExtensionPaymentMultibanco extends Controller {
 
 			$this->load->model('extension/payment/multibanco');
 
-			$order_info_ip = $this->model_extension_payment_multibanco->getOrderIdByIfthenpayData($entidade, $referencia, $valor);
+			$order_info_ip = $this->model_extension_payment_multibanco->getOrderIdByIfthenpayData($entidade, $referencia, number_format($valor, 2));
 
 			if ($order_info_ip) {
 				$this->load->model('checkout/order');
@@ -37,12 +37,19 @@ class ControllerExtensionPaymentMultibanco extends Controller {
 				$this->model_checkout_order->addOrderHistory($order_info["order_id"], $this->config->get('payment_multibanco_order_status_complete_id'), date("d-m-Y H:m:s"), true);
 
 				$this->model_extension_payment_multibanco->setIfthenpayDataStatus($order_info_ip["multibanco_id"]);
-			}
 
-			echo "Ok";
-			return;
+				echo "Encomenda paga";
+				http_response_code(200);
+			} else {
+				echo "Referência não encontrada";
+				http_response_code(200);
+			}
+			exit();
+		} else {
+			echo "Chave inválida";
+			http_response_code(200);
+			exit();
 		}
-		echo "NOT_OK";
 	}
 
 	public function confirm() {
@@ -63,7 +70,7 @@ class ControllerExtensionPaymentMultibanco extends Controller {
 			$comment  = '<div style=" border: 3px solid; margin: 10px; width: 170px; padding: 10px; ">';
 			$comment .= 'Entidade: <b>' . $entidade. '</b><br /><br />';
 			$comment .= 'Referência: <b>' . $referencia . '</b><br /><br />';
-			$comment .= 'Valor: <b>' . $valor . '</b><br />';
+			$comment .= 'Valor: <b>' . number_format($valor, 2) . '</b><br />';
 			$comment .= '</div>';
 
 
@@ -72,7 +79,7 @@ class ControllerExtensionPaymentMultibanco extends Controller {
 			$this->model_checkout_order->addOrderHistory($this->session->data['order_id'], $this->config->get('payment_multibanco_order_status_id'), $comment, true);
 
 
-			$this->model_extension_payment_multibanco->setIfthenpayData($order_info['order_id'], $entidade, $referencia, $valor);
+			$this->model_extension_payment_multibanco->setIfthenpayData($order_info['order_id'], $entidade, $referencia, number_format($valor, 2));
 
 			$json['redirect'] = $this->url->link('checkout/success');
 
