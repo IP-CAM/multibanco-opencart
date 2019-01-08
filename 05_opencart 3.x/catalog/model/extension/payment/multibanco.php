@@ -34,7 +34,7 @@
 		}
 
 		public function getOrderIdByIfthenpayData($entidade, $referencia, $valor){
-			return $this->db->query("SELECT multibanco_id, order_id FROM `" . DB_PREFIX . "ifthenpay_multibanco` WHERE entidade='" . $this->db->escape($entidade) . "' and referencia='" . $this->db->escape($referencia) . "' and valor like '" . $this->db->escape($valor) . "%' and estado = 0 ORDER BY multibanco_id desc limit 1")->row;
+			return $this->db->query("SELECT multibanco_id, order_id FROM `" . DB_PREFIX . "ifthenpay_multibanco` WHERE entidade='" . $this->db->escape($entidade) . "' and referencia='" . $this->db->escape($referencia) . "' and round(valor, 2) like '" . $this->db->escape($valor) . "%' and estado = 0 ORDER BY multibanco_id desc limit 1")->row;
 		}
 
 		public function setIfthenpayDataStatus($id){
