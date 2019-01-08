@@ -167,7 +167,7 @@ class ControllerExtensionPaymentMultibanco extends Controller {
 		$data['payment_multibanco_url'] = $url->link('extension/payment/multibanco/callback') . "&chave=[CHAVE_ANTI_PHISHING]&entidade=[ENTIDADE]&referencia=[REFERENCIA]&valor=[VALOR]";
 */
 
-		$data['payment_multibanco_url'] = ($this->config->get('config_secure') ? HTTP_CATALOG : HTTPS_CATALOG) . "index.php?route=extension/payment/multibanco/callback&chave=[CHAVE_ANTI_PHISHING]&entidade=[ENTIDADE]&referencia=[REFERENCIA]&valor=[VALOR]";
+		$data['payment_multibanco_url'] = ($this->config->get('config_secure') ? rtrim(HTTP_CATALOG, '/') : rtrim(HTTPS_CATALOG, '/')) . "/index.php?route=extension/payment/multibanco/callback&chave=[CHAVE_ANTI_PHISHING]&entidade=[ENTIDADE]&referencia=[REFERENCIA]&valor=[VALOR]";
 
 
 		$data['header'] = $this->load->controller('common/header');
@@ -189,7 +189,7 @@ class ControllerExtensionPaymentMultibanco extends Controller {
 
 		$entidade = $this->request->post['payment_multibanco_entidade'];
 		$subentidade = $this->request->post['payment_multibanco_subentidade'];
-		$url_cb = ($this->config->get('config_secure') ? HTTP_CATALOG : HTTPS_CATALOG) . "index.php?route=extension/payment/multibanco/callback&chave=[CHAVE_ANTI_PHISHING]&entidade=[ENTIDADE]&referencia=[REFERENCIA]&valor=[VALOR]";
+		$url_cb = ($this->config->get('config_secure') ? rtrim(HTTP_CATALOG, '/') : rtrim(HTTPS_CATALOG, '/')) . "index.php?route=extension/payment/multibanco/callback&chave=[CHAVE_ANTI_PHISHING]&entidade=[ENTIDADE]&referencia=[REFERENCIA]&valor=[VALOR]";
 
 		$ap_key_cb = $this->request->post['payment_multibanco_ap'];
 
