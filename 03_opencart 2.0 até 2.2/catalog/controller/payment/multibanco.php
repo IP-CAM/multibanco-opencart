@@ -5,7 +5,7 @@ class ControllerPaymentMultibanco extends Controller {
 
 		$data['button_confirm'] = $this->language->get('button_confirm');
 
-		$data['continue'] = $this->url->link('checkout/success');
+		$data['continue'] = $this->url->link('checkout/successMultibanco');
 
 		if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/payment/multibanco.tpl')) {
 			return $this->load->view($this->config->get('config_template') . '/template/payment/multibanco.tpl', $data);
@@ -50,6 +50,8 @@ class ControllerPaymentMultibanco extends Controller {
 
 	public function confirm() {
 		if ($this->session->data['payment_method']['code'] == 'multibanco') {
+			$json = array();
+            $comment = '';
 			$this->load->model('checkout/order');
 			$this->load->model('payment/multibanco');
 
@@ -59,13 +61,7 @@ class ControllerPaymentMultibanco extends Controller {
 			$referencia = $this->GenerateMbRef($this->config->get('multibanco_entidade'),$this->config->get('multibanco_subentidade'),$this->session->data['order_id'], $this->currency->format($order_info['total'], $order_info['currency_code'], $order_info['currency_value'], false));
 			$valor = $this->currency->format($order_info['total'], $order_info['currency_code'], $order_info['currency_value'], false);
 
-
-			$comment  = '<div style=" border: 3px solid; margin: 10px; width: 170px; padding: 10px; ">';
-			$comment .= 'Entidade: <b>' . $entidade. '</b><br /><br />';
-			$comment .= 'Referência: <b>' . $referencia . '</b><br /><br />';
-			$comment .= 'Valor: <b>' . $valor . '</b><br />';
-			$comment .= '</div>';
-
+			$comment = '<div><table style="width: auto;min-width: 280px;max-width: 320px;padding: 5px;font-size: 11px;color: #374953;border: 1px solid #dddddd; margin-top: 10px;"><tbody><tr><td style="padding: 5px;" colspan="2"><div align="left"><img src="https://ifthenpay.com/mb.png" alt="mbway"></div></td></tr><tr><td align="left" style="padding:10px; font-weight:bold; text-align:left">Entidade:</td><td align="left" style=" padding:10px; text-align:left">' . $entidade . '</td></tr><tr><td align="left" style="padding:10px; font-weight:bold; text-align:left">Referência:</td><td align="left" style=" padding:10px; text-align:left">' . $referencia . '</td></tr><tr><td align="left" style=" padding:10px; padding-top:10px; font-weight:bold; text-align:left">Encomenda:</td><td align="left" style=" padding:10px; padding-top:10px; text-align:left">#' . $this->session->data['order_id'] . '</td></tr><tr><td align="left" style="padding:10px; padding-bottom:15px; padding-top:10px; font-weight:bold; text-align:left">Valor:</td><td style="padding:10px; padding-bottom:15px; padding-top:10px; text-align:left">' . number_format($valor, 2) . ' EUR</td></tr><tr><td style="font-size: x-small; padding:0; border: 0px; text-align:center;" colspan="2">Por favor proceda ao pagamento da sua encomenda num terminal multibanco ou homebanking. Processado por <a href="https://www.ifthenpay.com" target="_blanck">Ifthenpay</a></td></tr></tbody></table></div>';
 
 			$teste = $this->url->link('common/home');
 
@@ -75,6 +71,11 @@ class ControllerPaymentMultibanco extends Controller {
 			$this->model_payment_multibanco->setIfthenpayData($order_info['order_id'], $entidade, $referencia, $valor);
 
 		}
+		$this->session->data['payment_method']['comment'] = $comment;
+
+        $json['redirect'] = $this->url->link('checkout/successmbway');
+        $this->response->addHeader('Content-Type: application/json');
+        $this->response->setOutput(json_encode($json));
 	}
 
 	//INÍCIO TRATAMENTO DEFINIÇÕES REGIONAIS
