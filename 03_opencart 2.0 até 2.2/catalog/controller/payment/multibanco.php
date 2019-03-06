@@ -40,6 +40,23 @@ class ControllerPaymentMultibanco extends Controller {
 				$this->model_checkout_order->addOrderHistory($order_info["order_id"], $this->config->get('multibanco_order_status_complete_id'), date("d-m-Y H:m:s"), true);
 
 				$this->model_payment_multibanco->setIfthenpayDataStatus($order_info_ip["multibanco_id"]);
+				
+			} else {
+
+				$order_info_ip = $this->model_payment_multibanco->getOrderIdByIfthenpayData($entidade, $referencia, number_format($valor));
+
+				if($order_info_ip) {
+
+					$this->load->model('checkout/order');
+
+					$order_info = $this->model_checkout_order->getOrder($order_info_ip["order_id"]);
+
+					$this->model_checkout_order->addOrderHistory($order_info["order_id"], $this->config->get('multibanco_order_status_complete_id'), date("d-m-Y H:m:s"), true);
+
+					$this->model_payment_multibanco->setIfthenpayDataStatus($order_info_ip["multibanco_id"]);
+				} else {
+					echo "Encomenda não encontrada.";
+				}
 			}
 
 			echo "Ok";
@@ -59,7 +76,7 @@ class ControllerPaymentMultibanco extends Controller {
 
 			$entidade = $this->config->get('multibanco_entidade');
 			$referencia = $this->GenerateMbRef($this->config->get('multibanco_entidade'),$this->config->get('multibanco_subentidade'),$this->session->data['order_id'], $this->currency->format($order_info['total'], $order_info['currency_code'], $order_info['currency_value'], false));
-			$valor = $this->currency->format($order_info['total'], $order_info['currency_code'], $order_info['currency_value'], false);
+			$valor = number_format($this->currency->format($order_info['total'], $order_info['currency_code'], $order_info['currency_value'], false), 2);
 
 			$comment = '<div><table style="width: auto;min-width: 280px;max-width: 320px;padding: 5px;font-size: 11px;color: #374953;border: 1px solid #dddddd; margin-top: 10px;"><tbody><tr><td style="padding: 5px;" colspan="2"><div align="left"><img src="https://ifthenpay.com/mb.png" alt="mbway"></div></td></tr><tr><td align="left" style="padding:10px; font-weight:bold; text-align:left">Entidade:</td><td align="left" style=" padding:10px; text-align:left">' . $entidade . '</td></tr><tr><td align="left" style="padding:10px; font-weight:bold; text-align:left">Referência:</td><td align="left" style=" padding:10px; text-align:left">' . $referencia . '</td></tr><tr><td align="left" style=" padding:10px; padding-top:10px; font-weight:bold; text-align:left">Encomenda:</td><td align="left" style=" padding:10px; padding-top:10px; text-align:left">#' . $this->session->data['order_id'] . '</td></tr><tr><td align="left" style="padding:10px; padding-bottom:15px; padding-top:10px; font-weight:bold; text-align:left">Valor:</td><td style="padding:10px; padding-bottom:15px; padding-top:10px; text-align:left">' . number_format($valor, 2) . ' EUR</td></tr><tr><td style="font-size: x-small; padding:0; border: 0px; text-align:center;" colspan="2">Por favor proceda ao pagamento da sua encomenda num terminal multibanco ou homebanking. Processado por <a href="https://www.ifthenpay.com" target="_blanck">Ifthenpay</a></td></tr></tbody></table></div>';
 
