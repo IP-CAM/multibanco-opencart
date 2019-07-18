@@ -165,7 +165,7 @@ class ControllerExtensionPaymentMultibanco extends Controller {
 		$data['multibanco_url'] = $url->link('extension/payment/multibanco/callback') . "&chave=[CHAVE_ANTI_PHISHING]&entidade=[ENTIDADE]&referencia=[REFERENCIA]&valor=[VALOR]";
 */
 
-		$data['multibanco_url'] = ($this->config->get('config_secure') ? HTTP_CATALOG : HTTPS_CATALOG) . "index.php?route=extension/payment/multibanco/callback&chave=[CHAVE_ANTI_PHISHING]&entidade=[ENTIDADE]&referencia=[REFERENCIA]&valor=[VALOR]";
+		$data['multibanco_url'] = ($this->config->get('config_secure') ? HTTP_CATALOG : HTTPS_CATALOG) . "index.php?route=payment/multibanco/callback&chave=[CHAVE_ANTI_PHISHING]&entidade=[ENTIDADE]&referencia=[REFERENCIA]&valor=[VALOR]";
 
 
 		$data['header'] = $this->load->controller('common/header');
