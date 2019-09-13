@@ -2,6 +2,7 @@
 class ControllerExtensionPaymentMultibanco extends Controller {
 
 	public function index() {
+		$this->load->language('extension/payment/multibanco');
 
 		$data['button_confirm'] = $this->language->get('button_confirm');
 
@@ -16,7 +17,7 @@ class ControllerExtensionPaymentMultibanco extends Controller {
 	}
 
 	public function callback(){
-		$chave_ap_int = $this->config->get('multibanco_ap');
+		$chave_ap_int = $this->config->get('payment_multibanco_ap');
 		$chave_ap_ext = $this->request->get['chave'];
 		$entidade = $this->request->get['entidade'];
 		$referencia = $this->request->get['referencia'];
@@ -26,14 +27,14 @@ class ControllerExtensionPaymentMultibanco extends Controller {
 
 			$this->load->model('extension/payment/multibanco');
 
-			$order_info_ip = $this->model_extension_payment_multibanco->getOrderIdByIfthenpayData($entidade, $referencia, $valor);
+			$order_info_ip = $this->model_extension_payment_multibanco->getOrderIdByIfthenpayData($entidade, $referencia, number_format($valor, 2));
 
 			if ($order_info_ip) {
 				$this->load->model('checkout/order');
 
 				$order_info = $this->model_checkout_order->getOrder($order_info_ip["order_id"]);
 
-				$this->model_checkout_order->addOrderHistory($order_info["order_id"], $this->config->get('multibanco_order_status_complete_id'), date("d-m-Y H:m:s"), true);
+				$this->model_checkout_order->addOrderHistory($order_info["order_id"], $this->config->get('payment_multibanco_order_status_complete_id'), date("d-m-Y H:m:s"), true);
 
 				$this->model_extension_payment_multibanco->setIfthenpayDataStatus($order_info_ip["multibanco_id"]);
 
@@ -52,26 +53,40 @@ class ControllerExtensionPaymentMultibanco extends Controller {
 	}
 
 	public function confirm() {
+
+		$json = array();
+
 		if ($this->session->data['payment_method']['code'] == 'multibanco') {
 			$this->load->model('checkout/order');
 			$this->load->model('extension/payment/multibanco');
 
 			$order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
 
-			$entidade = $this->config->get('multibanco_entidade');
-			$referencia = $this->GenerateMbRef($this->config->get('multibanco_entidade'),$this->config->get('multibanco_subentidade'),$this->session->data['order_id'], $this->currency->format($order_info['total'], $order_info['currency_code'], $order_info['currency_value'], false));
-			$valor = number_format((float)$this->currency->format($order_info['total'], $order_info['currency_code'], $order_info['currency_value'], false), 2, '.', '');
-			
+			$entidade = $this->config->get('payment_multibanco_entidade');
+			$referencia = $this->GenerateMbRef($this->config->get('payment_multibanco_entidade'),$this->config->get('payment_multibanco_subentidade'),$this->session->data['order_id'], $this->currency->format($order_info['total'], $order_info['currency_code'], $order_info['currency_value'], false));
+			$valor = $this->currency->format($order_info['total'], $order_info['currency_code'], $order_info['currency_value'], false);
+
+
 			$comment  = '<div style=" border: 3px solid; margin: 10px; width: 170px; padding: 10px; ">';
 			$comment .= 'Entidade: <b>' . $entidade. '</b><br /><br />';
 			$comment .= 'Referência: <b>' . $referencia . '</b><br /><br />';
-			$comment .= 'Valor: <b>' . $valor . '</b><br />';
+			$comment .= 'Valor: <b>' . number_format($valor, 2) . '</b><br />';
 			$comment .= '</div>';
 
-			$this->model_checkout_order->addOrderHistory($this->session->data['order_id'], $this->config->get('multibanco_order_status_id'), $comment, true);
 
-			$this->model_extension_payment_multibanco->setIfthenpayData($order_info['order_id'], $entidade, $referencia, $valor);
+			$teste = $this->url->link('common/home');
+
+			$this->model_checkout_order->addOrderHistory($this->session->data['order_id'], $this->config->get('payment_multibanco_order_status_id'), $comment, true);
+
+
+			$this->model_extension_payment_multibanco->setIfthenpayData($order_info['order_id'], $entidade, $referencia, number_format($valor, 2));
+
+			$json['redirect'] = $this->url->link('checkout/success');
+
 		}
+
+		$this->response->addHeader('Content-Type: application/json');
+		$this->response->setOutput(json_encode($json));	
 	}
 
 	//INÍCIO TRATAMENTO DEFINIÇÕES REGIONAIS
@@ -177,4 +192,3 @@ class ControllerExtensionPaymentMultibanco extends Controller {
 	}
 }
 ?>
-
