@@ -36,12 +36,19 @@ class ControllerExtensionPaymentMultibanco extends Controller {
 				$this->model_checkout_order->addOrderHistory($order_info["order_id"], $this->config->get('multibanco_order_status_complete_id'), date("d-m-Y H:m:s"), true);
 
 				$this->model_extension_payment_multibanco->setIfthenpayDataStatus($order_info_ip["multibanco_id"]);
-			}
 
-			echo "Ok";
-			return;
+				echo "Encomenda paga";
+				http_response_code(200);
+			} else {
+				echo "Referência não encontrada";
+				http_response_code(200);
+			}
+			exit();
+		} else {
+			echo "Chave inválida";
+			http_response_code(200);
+			exit();
 		}
-		echo "NOT_OK";
 	}
 
 	public function confirm() {
@@ -53,23 +60,17 @@ class ControllerExtensionPaymentMultibanco extends Controller {
 
 			$entidade = $this->config->get('multibanco_entidade');
 			$referencia = $this->GenerateMbRef($this->config->get('multibanco_entidade'),$this->config->get('multibanco_subentidade'),$this->session->data['order_id'], $this->currency->format($order_info['total'], $order_info['currency_code'], $order_info['currency_value'], false));
-			$valor = $this->currency->format($order_info['total'], $order_info['currency_code'], $order_info['currency_value'], false);
-
-
+			$valor = number_format((float)$this->currency->format($order_info['total'], $order_info['currency_code'], $order_info['currency_value'], false), 2, '.', '');
+			
 			$comment  = '<div style=" border: 3px solid; margin: 10px; width: 170px; padding: 10px; ">';
 			$comment .= 'Entidade: <b>' . $entidade. '</b><br /><br />';
 			$comment .= 'Referência: <b>' . $referencia . '</b><br /><br />';
 			$comment .= 'Valor: <b>' . $valor . '</b><br />';
 			$comment .= '</div>';
 
-
-			$teste = $this->url->link('common/home');
-
 			$this->model_checkout_order->addOrderHistory($this->session->data['order_id'], $this->config->get('multibanco_order_status_id'), $comment, true);
 
-
 			$this->model_extension_payment_multibanco->setIfthenpayData($order_info['order_id'], $entidade, $referencia, $valor);
-
 		}
 	}
 
@@ -176,3 +177,4 @@ class ControllerExtensionPaymentMultibanco extends Controller {
 	}
 }
 ?>
+
