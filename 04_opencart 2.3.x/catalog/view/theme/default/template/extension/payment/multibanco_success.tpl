@@ -15,7 +15,7 @@
 			</tr>
 			<tr>
 				<td style="font-size: x-small; font-weight:bold; text-align:left">Valor:</td>
-				<td style="font-size: x-small; text-align:left"><?php echo number_format((float)$entry_valor, 2, '.', ''); ?> &euro;</td>
+				<td style="font-size: x-small; text-align:left"><?php echo $entry_valor; ?> &euro;</td>
 			</tr>
 			<tr>
 				<td style="font-size: xx-small;border-top: 1px solid #45829F; border-left: 0px; border-right: 0px; border-bottom: 0px; background-color: #45829F; color: White" colspan="3">O tal&atilde;o emitido pela caixa autom&aacute;tica faz prova de pagamento. Conserve-o.</td>
